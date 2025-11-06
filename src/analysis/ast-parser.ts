@@ -3,7 +3,7 @@
  */
 
 import type { ASTNode, FunctionInfo, DependencyInfo, CodeMetrics } from '../types/index.js';
-import { Parser as BabelParser } from '@babel/parser';
+import { parse as babelParse } from '@babel/parser';
 
 /**
  * Parse file and extract AST
@@ -89,7 +89,7 @@ function parseTypeScript(
 } {
   try {
     // Use Babel parser for TypeScript - it has better support
-    const ast = BabelParser.parse(content, {
+    const ast = babelParse(content, {
       sourceType: 'module',
       plugins: [
         'typescript',
@@ -133,7 +133,7 @@ function parseJavaScript(
   metrics: CodeMetrics;
 } {
   try {
-    const ast = BabelParser.parse(content, {
+    const ast = babelParse(content, {
       sourceType: 'module',
       plugins: [
         'jsx',

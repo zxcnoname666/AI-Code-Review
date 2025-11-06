@@ -132,6 +132,7 @@ async function runCustomLinter(
 const DEFAULT_ESLINT_CONFIG_V9 = `// ESLint flat config (v9+)
 export default [
   {
+    files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.mjs', '**/*.cjs'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
