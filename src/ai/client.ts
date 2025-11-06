@@ -74,9 +74,16 @@ export async function performAIReview(
 
     const response = await callOpenAI(messages, aiConfig);
 
-    // Check if response is empty
-    if (!response || response.trim().length === 0) {
-      warning(`Empty response at iteration ${iteration}`);
+    // Check for tool calls first (before checking if response is empty)
+    const toolCalls = parseToolCalls(response);
+
+    // If we have tool calls, process them even if content is empty
+    if (toolCalls.length > 0) {
+      // Continue to tool execution below
+    }
+    // Check if response is empty and no tool calls
+    else if (!response || response.trim().length === 0) {
+      warning(`Empty response with no tool calls at iteration ${iteration}`);
 
       if (iteration > 1) {
         messages.push({
@@ -85,14 +92,11 @@ export async function performAIReview(
         });
         continue;
       } else {
-        throw new Error('AI returned empty response on first iteration');
+        throw new Error('AI returned empty response on first iteration with no tool calls');
       }
     }
-
-    // Check for tool calls
-    const toolCalls = parseToolCalls(response);
-
-    if (toolCalls.length === 0) {
+    // No tool calls but we have content - this is the final review
+    else {
       info('✅ Final review generated');
       return cleanupResponse(response);
     }
@@ -186,7 +190,23 @@ async function callOpenAI(
       throw new Error('Invalid response format from OpenAI API');
     }
 
-    const content = data.choices[0].message.content || '';
+    const message = data.choices[0].message;
+    let content = message.content || '';
+
+    // Handle structured tool calls from API
+    // Some models return tool_calls in a separate field instead of in content
+    if (message.tool_calls && message.tool_calls.length > 0) {
+      const toolCallsJson = message.tool_calls.map((tc: any) => ({
+        name: tc.function?.name || tc.name,
+        arguments: typeof tc.function?.arguments === 'string'
+          ? JSON.parse(tc.function.arguments)
+          : (tc.function?.arguments || tc.arguments || {}),
+      }));
+
+      // Format tool calls as JSON block so parseToolCalls can process them
+      const toolCallsBlock = '\n\n```json\n' + JSON.stringify(toolCallsJson, null, 2) + '\n```\n';
+      content = content ? content + toolCallsBlock : toolCallsBlock;
+    }
 
     // Log token usage
     if (data.usage) {
