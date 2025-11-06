@@ -27,26 +27,15 @@ export function generateStatisticsReport(stats: ReviewStatistics, issues: Review
  * Generate header with logo
  */
 function generateHeader(): string {
-  const table = new Table({
-    chars: {
-      'top': '━', 'top-mid': '⁤', 'top-left': '┏', 'top-right': '┓',
-      'bottom': '━', 'bottom-mid': '⁤', 'bottom-left': '┗', 'bottom-right': '┛',
-      'left': '┃', 'left-mid': '┃', 'mid': '⁤', 'mid-mid': '⁤',
-      'right': '┃', 'right-mid': '┃', 'middle': '┃'
-    },
-    style: { 'padding-left': 0, 'padding-right': 0 },
-    colWidths: [69]
-  });
-
-  table.push(
-    [''],
-    ['    🤖  𝗔𝗜 𝗖𝗢𝗗𝗘 𝗥𝗘𝗩𝗜𝗘𝗪 - 𝗔𝗡𝗔𝗟𝗬𝗦𝗜𝗦 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘  🤖'],
-    [''],
-    ['         ⚡ Powered by Advanced AI & Deep Code Analysis ⚡'],
-    ['']
-  );
-
-  return '```\n' + table.toString() + '\n```';
+  return `\`\`\`
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                                                                   ┃
+┃      🤖 𝗔𝗜 𝗖𝗢𝗗𝗘 𝗥𝗘𝗩𝗜𝗘𝗪 - 𝗔𝗡𝗔𝗟𝗬𝗦𝗜𝗦 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘 🤖              ┃
+┃                                                                   ┃
+┃         ⚡ Powered by Advanced AI & Deep Code Analysis ⚡           ┃
+┃                                                                   ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+\`\`\``;
 }
 
 /**
@@ -421,31 +410,31 @@ export function generateSummaryBadge(stats: ReviewStatistics): string {
   const qualityScore = Math.max(0, 100 - (stats.criticalIssues * 20) - (stats.warningIssues * 5) - (stats.infoIssues * 1));
   const scoreBar = generateProgressBar(qualityScore, 100, 25);
 
-  const table = new Table({
-    chars: {
-      'top': '━', 'top-mid': '⁤', 'top-left': '┏', 'top-right': '┓',
-      'bottom': '━', 'bottom-mid': '⁤', 'bottom-left': '┗', 'bottom-right': '┛',
-      'left': '┃', 'left-mid': '┃', 'mid': '⁤', 'mid-mid': '⁤',
-      'right': '┃', 'right-mid': '┃', 'middle': '┃'
-    },
-    style: { 'padding-left': 0, 'padding-right': 0 },
-    colWidths: [53]
-  });
+const table = new Table({
+  chars: {
+    'top': '━', 'top-mid': '', 'top-left': '┏', 'top-right': '┓',
+    'bottom': '━', 'bottom-mid': '', 'bottom-left': '┗', 'bottom-right': '┛',
+    'left': '┃', 'left-mid': '', 'mid': '', 'mid-mid': '',
+    'right': '┃', 'right-mid': '', 'middle': '┃'
+  },
+  style: { 'padding-left': 0, 'padding-right': 0 },
+  colWidths: [53]
+});
 
-  table.push(
-    [''],
-    [`  ${statusIcon}  ${status}`],
-    [''],
-    [`  📊 Quality Score: ${scoreBar}`],
-    [''],
-    ['  Issues Found:'],
-    [`    • Critical: ${String(stats.criticalIssues).padStart(3)} 🔴`],
-    [`    • Warnings:  ${String(stats.warningIssues).padStart(3)} ⚠️`],
-    [`    • Info:      ${String(stats.infoIssues).padStart(3)} 📘`],
-    [''],
-    [`  Files: ${stats.filesWithIssues}/${stats.totalFiles} affected`],
-    ['']
-  );
+table.push(
+  [''],
+  [`  ${statusIcon}  ${status}`],
+  [''],
+  [`  📊 Quality Score: ${scoreBar}`],
+  [''],
+  ['  Issues Found:'],
+  [`    • Critical: ${String(stats.criticalIssues).padStart(3)} 🔴`],
+  [`    • Warnings:  ${String(stats.warningIssues).padStart(3)} ⚠️`],
+  [`    • Info:      ${String(stats.infoIssues).padStart(3)} 📘`],
+  [''],
+  [`  Files: ${stats.filesWithIssues}/${stats.totalFiles} affected`],
+  ['']
+);
 
   return '```\n' + table.toString() + '\n```';
 }
