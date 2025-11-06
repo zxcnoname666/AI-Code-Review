@@ -1,9 +1,9 @@
-name: 'AI Code Review - Advanced Analysis'
-description: '🤖 Advanced AI-powered code review with AST analysis, linters, dependency tracking, and beautiful statistics'
+name: 'AI Code Review'
+description: '🤖 AI-powered automated code review with GPT-5, Claude, Gemini. Deep static analysis, AST parsing, linter integration.'
 author: 'zxcnoname666'
 
 branding:
-  icon: 'search'
+  icon: 'check-circle'
   color: 'purple'
 
 runs:
