@@ -46,7 +46,7 @@ When using `gpt-5-high` model, the action fails with error "Invalid model".
 **Environment:**
 - Node.js: 20.10.0
 - OS: Ubuntu 22.04
-- AI Code Reviewer: v3.0.0
+- AI Code Reviewer: v1.0.0
 ```
 
 ## 💡 Suggesting Features
