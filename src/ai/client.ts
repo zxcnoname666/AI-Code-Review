@@ -19,7 +19,8 @@ interface OpenAIConfig {
 /**
  * Maximum iterations for tool use loop
  */
-const MAX_ITERATIONS = 20;
+const MAX_ITERATIONS = 50; // Increased for thorough reviews
+const MAX_TOOL_RESULT_LENGTH = 3000; // Limit tool result length to save context
 
 /**
  * Maximum tokens for response
@@ -116,9 +117,16 @@ export async function performAIReview(
           toolResults.push(`**Tool**: ${result.name}\n**Error**: ${result.error}`);
           warning(`Tool ${result.name} failed: ${result.error}`);
         } else {
-          const resultStr = typeof result.result === 'string'
+          let resultStr = typeof result.result === 'string'
             ? result.result
             : JSON.stringify(result.result, null, 2);
+
+          // Truncate large results to save context
+          if (resultStr.length > MAX_TOOL_RESULT_LENGTH) {
+            const truncated = resultStr.slice(0, MAX_TOOL_RESULT_LENGTH);
+            const linesCount = resultStr.split('\n').length;
+            resultStr = `${truncated}\n\n... [truncated ${resultStr.length - MAX_TOOL_RESULT_LENGTH} chars, ~${linesCount} total lines]`;
+          }
 
           toolResults.push(`**Tool**: ${result.name}\n**Result**:\n${resultStr}`);
           info(`  ✓ ${result.name} completed`);

@@ -127,25 +127,41 @@ async function runCustomLinter(
 }
 
 /**
- * Default ESLint configuration for projects without config
+ * Default ESLint 9+ flat config for projects without config
  */
-const DEFAULT_ESLINT_CONFIG = {
-  env: {
-    browser: true,
-    es2021: true,
-    node: true,
+const DEFAULT_ESLINT_CONFIG_V9 = `// ESLint flat config (v9+)
+export default [
+  {
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        // Browser globals
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        console: 'readonly',
+        // Node.js globals
+        process: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        Buffer: 'readonly',
+        global: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': 'warn',
+      'no-console': 'off',
+      'no-undef': 'error',
+      'no-constant-condition': 'warn',
+      'no-empty': 'warn',
+    },
   },
-  extends: ['eslint:recommended'],
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-  },
-  rules: {
-    'no-unused-vars': 'warn',
-    'no-console': 'off',
-    'no-undef': 'error',
-  },
-};
+];
+`;
 
 /**
  * Lint JavaScript/TypeScript files
@@ -169,10 +185,10 @@ async function lintJavaScript(filename: string, workdir: string): Promise<LintRe
   // Create default config if none exists
   if (!hasEslintConfig) {
     try {
-      const defaultConfigPath = join(workdir, '.eslintrc.json');
-      writeFileSync(defaultConfigPath, JSON.stringify(DEFAULT_ESLINT_CONFIG, null, 2));
+      const defaultConfigPath = join(workdir, 'eslint.config.js');
+      writeFileSync(defaultConfigPath, DEFAULT_ESLINT_CONFIG_V9);
       hasEslintConfig = true;
-      console.log(`Created default ESLint config at ${defaultConfigPath}`);
+      console.log(`Created default ESLint flat config at ${defaultConfigPath}`);
     } catch (error) {
       console.warn('Failed to create default ESLint config:', error);
       return results;
