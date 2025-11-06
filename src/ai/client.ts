@@ -19,7 +19,7 @@ interface OpenAIConfig {
 /**
  * Maximum iterations for tool use loop
  */
-const MAX_ITERATIONS = 20;
+const MAX_ITERATIONS = 50; // Increased for thorough reviews
 
 /**
  * Maximum tokens for response

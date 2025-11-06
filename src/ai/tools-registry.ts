@@ -425,9 +425,10 @@ async function findFunctionCallers(funcName: string, filePath: string, context: 
   // TODO: Integrate with call graph when analyzing all files
   let output = '';
 
+  // Use -F for fixed string search to avoid regex special chars issues
   await exec(
     'git',
-    ['grep', '-n', `${funcName}\\(`, context.headSha],
+    ['grep', '-F', '-n', `${funcName}(`, context.headSha],
     {
       cwd: context.workdir,
       ignoreReturnCode: true,

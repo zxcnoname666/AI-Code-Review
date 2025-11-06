@@ -4,9 +4,6 @@
 
 import type { ASTNode, FunctionInfo, DependencyInfo, CodeMetrics } from '../types/index.js';
 import { Parser as BabelParser } from '@babel/parser';
-import * as tsParser from '@typescript-eslint/parser';
-import * as acorn from 'acorn';
-import * as acornWalk from 'acorn-walk';
 
 /**
  * Parse file and extract AST
@@ -91,12 +88,21 @@ function parseTypeScript(
   metrics: CodeMetrics;
 } {
   try {
-    const ast = tsParser.parse(content, {
-      ecmaVersion: 'latest',
+    // Use Babel parser for TypeScript - it has better support
+    const ast = BabelParser.parse(content, {
       sourceType: 'module',
-      ecmaFeatures: {
-        jsx: isTSX,
-      },
+      plugins: [
+        'typescript',
+        isTSX ? 'jsx' : null,
+        'decorators-legacy',
+        'classProperties',
+        'dynamicImport',
+        'exportDefaultFrom',
+        'exportNamespaceFrom',
+        'objectRestSpread',
+        'optionalChaining',
+        'nullishCoalescingOperator',
+      ].filter(Boolean) as any[],
     });
 
     const functions = extractFunctions(ast as any);
