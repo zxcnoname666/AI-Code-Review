@@ -207,7 +207,8 @@ function isRetryableError(error: any): boolean {
     message.includes('network') ||
     message.includes('econnreset') ||
     message.includes('enotfound') ||
-    message.includes('etimedout')
+    message.includes('etimedout') ||
+    message.includes('invalid response format')
   );
 }
 
